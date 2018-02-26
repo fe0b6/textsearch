@@ -54,6 +54,8 @@ func GetIndexes(words []string) (ind [][]string, err error) {
 		return
 	}
 
+	log.Println(string(outBuffer.Bytes()))
+
 	ind = [][]string{}
 	for _, b := range strings.Split(string(outBuffer.Bytes()), "\n") {
 		var ans []answer
