@@ -88,3 +88,17 @@ func getBest(arr []analys) (ans string) {
 
 	return
 }
+
+// Search - Поиск совпадений
+func (q Query) Search(ind []string) (ok bool) {
+	for _, w := range q.Words {
+		for _, w2 := range ind {
+			if w2 == w {
+				ok = true
+				return
+			}
+		}
+	}
+
+	return
+}
