@@ -59,6 +59,8 @@ func GetIndexes(words []string) (ind [][]string, err error) {
 	ind = [][]string{}
 	for _, b := range strings.Split(string(outBuffer.Bytes()), "\n") {
 		var ans []answer
+		log.Println(b)
+
 		err = json.Unmarshal([]byte(b), &ans)
 		if err != nil {
 			log.Println("[error]", err)
