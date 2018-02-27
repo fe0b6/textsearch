@@ -9,12 +9,14 @@ import (
 )
 
 var (
-	mystemBin string
+	mystemBin  string
+	minWordLen int
 )
 
 // Init - инициализация
-func Init(path string) {
+func Init(path string, ml int) {
 	mystemBin = path
+	minWordLen = ml
 }
 
 // GetIndex - строку а возвращаем индекс для нее
@@ -68,7 +70,11 @@ func GetIndexes(words []string) (ind [][]string, err error) {
 
 		arr := []string{}
 		for _, a := range ans {
-			arr = append(arr, getBest(a.Analysis))
+			w := getBest(a.Analysis)
+			if len(w) < minWordLen {
+				continue
+			}
+			arr = append(arr, w)
 		}
 
 		ind = append(ind, arr)
