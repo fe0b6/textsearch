@@ -6,6 +6,7 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+	"unicode/utf8"
 )
 
 var (
@@ -71,7 +72,7 @@ func GetIndexes(words []string) (ind [][]string, err error) {
 		arr := []string{}
 		for _, a := range ans {
 			w := getBest(a.Analysis)
-			if len(w) < minWordLen {
+			if utf8.RuneCountInString(w) < minWordLen {
 				continue
 			}
 			arr = append(arr, w)
