@@ -51,7 +51,7 @@ func GetIndexes(words []string) (ind [][]string, err error) {
 				continue
 			}
 
-			arr = append(arr, w)
+			arr = append(arr, strings.ToLower(w))
 		}
 		tmpInd = append(tmpInd, arr)
 
