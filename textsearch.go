@@ -5,19 +5,24 @@ import (
 	"encoding/json"
 	"log"
 	"os/exec"
+	"regexp"
 	"strings"
 	"unicode/utf8"
 )
 
 var (
-	mystemBin  string
-	minWordLen int
+	mystemBin   string
+	minWordLen  int
+	ruReg       *regexp.Regexp
+	strSplitReg *regexp.Regexp
 )
 
 // Init - инициализация
 func Init(path string, ml int) {
 	mystemBin = path
 	minWordLen = ml
+	ruReg = regexp.MustCompile("^[а-яА-Я]+$")
+	strSplitReg = regexp.MustCompile("[^a-zA-Zа-яА-Я0-9]")
 }
 
 // GetIndex - строку а возвращаем индекс для нее
@@ -36,8 +41,20 @@ func GetIndex(word string) (ind []string, err error) {
 func GetIndexes(words []string) (ind [][]string, err error) {
 	var inputBuffer, outBuffer bytes.Buffer
 
+	tmpInd := [][]string{}
 	for _, s := range words {
 		s = strings.Replace(strings.Replace(s, "\n", " ", -1), "\r", "", -1)
+
+		arr := []string{}
+		for _, w := range strSplitReg.Split(s, -1) {
+			if ruReg.MatchString(w) {
+				continue
+			}
+
+			arr = append(arr, w)
+		}
+		tmpInd = append(tmpInd, arr)
+
 		inputBuffer.Write([]byte(s + "\n"))
 	}
 
@@ -57,8 +74,7 @@ func GetIndexes(words []string) (ind [][]string, err error) {
 		return
 	}
 
-	ind = [][]string{}
-	for _, b := range strings.Split(string(outBuffer.Bytes()), "\n") {
+	for i, b := range strings.Split(string(outBuffer.Bytes()), "\n") {
 		if b == "" {
 			continue
 		}
@@ -76,6 +92,11 @@ func GetIndexes(words []string) (ind [][]string, err error) {
 				continue
 			}
 			arr = append(arr, w)
+		}
+
+		// ДОбавляем не русские слова и цифры
+		if len(tmpInd[i]) > 0 {
+			arr = append(arr, tmpInd[i]...)
 		}
 
 		ind = append(ind, arr)
